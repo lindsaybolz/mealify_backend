@@ -5,9 +5,35 @@ from django.contrib.auth.models import AbstractUser
 
 # Create your models here.
 class User(AbstractUser):
-    alergies = models.JSONField()
-    restrictions = models.JSONField()
-    prefrences = models.JSONField()
+    """
+    Fields:
+    id | password | last_login | is_superuser | username | first_name | last_name | email | is_staff | is_active | date_joined | alergies | restrictions | prefrences 
+    """
+    def default_json():
+        return {}
+    alergies = models.JSONField(default=default_json)
+    restrictions = models.JSONField(default=default_json)
+    prefrences = models.JSONField(default=default_json)
+
+    def __str__(self):
+        return f'{self.first_name} {self.last_name}: {self.username}'
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'last_login': self.last_login,
+            'is_superuser': self.is_superuser,
+            'username': self.username,
+            'first_name': self.first_name,
+            'last_name': self.last_name,
+            'email': self.email,
+            'is_staff': self.is_staff,
+            'is_active': self.is_active,
+            'date_joined': self.date_joined,
+            'alergies': self.alergies,
+            'restrictions': self.restrictions,
+            'prefrences': self.prefrences,
+        }
 
 
 class Pantry(models.Model):
