@@ -13,10 +13,10 @@ def index(request):
 def login(request):
     username = request.POST['username']
     password = request.POST['password']
-    user = "TEST"
-    # user = authenticate(request, username=username, password=password)
+    # user = "TEST"
+    user = authenticate(request, username=username, password=password)
     if user is not None:
-        # login(request, user)
+        login(request, user)
         HttpResponse(f'User {username} successfully loged in.')
         # response
 
@@ -28,8 +28,9 @@ def login(request):
 def logout_view(request):
     logout(request)
 
-class UserListView():
+class UserListView(ListView):
     model = User
+
     def get(self, request):
         pass
 
