@@ -13,7 +13,7 @@ class User(AbstractUser):
 class Pantry(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     food_list = models.JSONField()
-    updated = models.DataTimeField('Last Updated On')
+    updated = models.DateTimeField('Last Updated On')
     staples = models.JSONField()
 
 
