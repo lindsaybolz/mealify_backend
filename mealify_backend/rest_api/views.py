@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework.exceptions import bad_request
 from rest_framework import authentication, permissions
 from rest_framework import status
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import get_list_or_404, get_object_or_404
 
 from .models import User, Pantry, Recipe
 import datetime
@@ -150,21 +150,65 @@ class PantryRoutes(APIView):
         return Response(f'Pantry successflly deleted: {pantry.to_dict()}')
 
 class RecipesRoutes(APIView):
-    """
-    	/users/1/recipes/
-		Takes new recipe info and adds to db:
-			{user: 1, name:..., ingredients…..}
 
-    """
-    # def post(self, request, **args):
-    #     user = get_object_or_404(User, pk=args['pk'])
-    #     food_list = {}
-    #     for item in request.data['food_list']:
-    #         food_list[item] = 1
-    #     # food_list = request.data['food_list']
-    #     new_pantry = Pantry.objects.create( 
-    #         user = user,
-    #         food_list = food_list,
-    #     )
-    #     return Response(f'New pantry successfully registered {new_pantry.to_dict()}')
+
+    def post(self, request, **args):
+        user = get_object_or_404(User, pk=args['pk'])
+        ingredients = {}
+        for ingredient in request.data['ingredients']:
+            ingredients[ingredient] = 1
+
+        new_recipe = Recipe.objects.create( 
+            user = user,
+            name = request.data['name'],
+            ingredients = ingredients,
+            instructions = request.data['instructions'],
+            nutritional_data = request.data['nutritional_data'],
+            url = request.data['url'],
+            user_state = request.data['user_state'],
+        )
+        return Response(f'New recipe successfully created {new_recipe.to_dict()}')
+
+    def get(self, request, **args):        
+        recipes = get_list_or_404(Recipe, user_id=args['pk'])
+        if len(request.GET.keys()) == 0:
+            recipes_response = []
+            for recipe in recipes:
+                recipes_response.append(recipe.to_dict())
+
+            return Response(f'{recipes_response}')
+        else:
+            if request.GET['pantry'] != None:
+                pantry = get_object_or_404(Pantry, user_id=args['pk'])
+                filtered_recipes = []
+                for ingredient in pantry.food_list.keys():
+                    for recipe in recipes:
+                        if recipe.ingredients.get(ingredient):
+                            filtered_recipes.append(recipe.to_dict())
+            elif request.GET['ingredients'] != None:
+                for ingredient in request.GET['ingredients'].split(', '):
+                    filtered_recipes = [recipe.to_dict() for recipe in recipes if recipe.ingredients.get(ingredient) != None]
+            
+            if filtered_recipes == []:
+                return Response('No recipes matching these requirements are saved to this user profile.')
+            else:
+                return Response(f'{filtered_recipes}')
+
+    def patch(self, request, **args):
+        print('in patch')
+        path = request.META.get('PATH_INFO', None).split('/')[-2]
+        print(args['pk'])
+        recipe = get_object_or_404(Recipe, pk=args['pk'])
+        print(recipe)
+        if path == 'favorite':
+            print('in favorite')
+            recipe.user_state = 1
+        elif path == 'unfavorite':
+            recipe.user_state = -1
+        elif path == 'neutralize':
+            recipe.user_state = 0
+
+        recipe.save()
+        print(recipe.to_dict())
+        return Response(f'Recipe successfully updated user state: {recipe.to_dict()}')
 

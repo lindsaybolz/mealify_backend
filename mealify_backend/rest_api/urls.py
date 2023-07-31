@@ -21,5 +21,10 @@ urlpatterns = [
     path('users/<int:pk>/pantry/remove/', views.PantryRoutes.as_view(), name='pantry_remove'),
     # ex: /users/1/recipes/
     path('users/<int:pk>/recipes/', views.RecipesRoutes.as_view(), name='recipes'),
-
+    # ex: users/1/recipes/1/favorite
+    path('recipes/<int:pk>/favorite/', views.RecipesRoutes.as_view(), name='recipes'),
+    # ex: users/1/recipes/1/unfavorite
+    path('recipes/<int:pk>/unfavorite/', views.RecipesRoutes.as_view(), name='recipes'),
+    # ex: users/1/recipes/1/neutralize
+    path('recipes/<int:pk>/neutralize/', views.RecipesRoutes.as_view(), name='recipes'),
 ]
