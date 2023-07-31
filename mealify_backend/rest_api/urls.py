@@ -15,4 +15,11 @@ urlpatterns = [
     path('users/<int:pk>', views.UsersRoutes.as_view(), name='users_id'),
     # ex: /users/1/pantry/
     path('users/<int:pk>/pantry/', views.PantryRoutes.as_view(), name='pantry'),
+    # ex: /users/1/pantry/add/
+    path('users/<int:pk>/pantry/add/', views.PantryRoutes.as_view(), name='pantry_add'),
+    # ex: /users/1/pantry/remove/
+    path('users/<int:pk>/pantry/remove/', views.PantryRoutes.as_view(), name='pantry_remove'),
+    # ex: /users/1/recipes/
+    path('users/<int:pk>/recipes/', views.RecipesRoutes.as_view(), name='recipes'),
+
 ]

@@ -111,12 +111,60 @@ class UsersRoutes(APIView):
 
 class PantryRoutes(APIView):
 
+    def get(self, request, **args):
+        pantry = get_object_or_404(Pantry, user_id=args['pk'])
+        return Response(f'{pantry.to_dict()}')
+
     def post(self, request, **args):
         user = get_object_or_404(User, pk=args['pk'])
-        food_list = request.data['food_list']
+        food_list = {}
+        for item in request.data['food_list']:
+            food_list[item] = 1
+        # food_list = request.data['food_list']
         new_pantry = Pantry.objects.create( 
             user = user,
             food_list = food_list,
         )
         return Response(f'New pantry successfully registered {new_pantry.to_dict()}')
+
+    def patch(self, request, **args):
+        path = request.META.get('PATH_INFO', None).split('/')[-2]
+        pantry = get_object_or_404(Pantry, user_id=args['pk'])
+        new_items = request.data['food_list']
+        if path == 'add':
+            for item in new_items:
+                pantry.food_list[item] = 1
+            pantry.save()
+            return Response(f'Pantry successfully added foods: {pantry.to_dict()}')
+        elif path == 'remove':
+            for item in new_items:
+                print(pantry.food_list)
+                pantry.food_list.pop(item)
+            pantry.save()
+            return Response(f'Pantry successfully deleted foods: {pantry.to_dict()}')
+
+    def delete(self, request, **args):
+        pantry = get_object_or_404(Pantry, user_id=args['pk'])
+        pantry_dict = pantry.to_dict()
+        pantry.delete()
+        return Response(f'Pantry successflly deleted: {pantry.to_dict()}')
+
+class RecipesRoutes(APIView):
+    """
+    	/users/1/recipes/
+		Takes new recipe info and adds to db:
+			{user: 1, name:..., ingredients…..}
+
+    """
+    # def post(self, request, **args):
+    #     user = get_object_or_404(User, pk=args['pk'])
+    #     food_list = {}
+    #     for item in request.data['food_list']:
+    #         food_list[item] = 1
+    #     # food_list = request.data['food_list']
+    #     new_pantry = Pantry.objects.create( 
+    #         user = user,
+    #         food_list = food_list,
+    #     )
+    #     return Response(f'New pantry successfully registered {new_pantry.to_dict()}')
 
