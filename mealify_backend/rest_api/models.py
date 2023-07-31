@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.contrib.auth.models import AbstractUser
+import datetime
 
 # Create your models here.
 class User(AbstractUser):
@@ -39,8 +40,14 @@ class User(AbstractUser):
 class Pantry(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     food_list = models.JSONField()
-    updated = models.DateTimeField('Last Updated On')
-    staples = models.JSONField()
+    updated = models.DateTimeField('Last Updated On', blank=True, null=True,default=datetime.date.today)    # staples = models.JSONField()
+    
+    def to_dict(self):
+        return {
+            'user': self.user,
+            'food_list': self.food_list,
+            'updated': self.updated,
+        }
 
 
 class Recipe(models.Model):

@@ -10,7 +10,9 @@ urlpatterns = [
     # ex: /rest_api/logout/
     path('logout/', views.logout, name='logout'),
     # ex: /rest_api/users/
-    path('users/', views.ListUsers.as_view(), name='users'),
+    path('users/', views.UsersRoutes.as_view(), name='users'),
     # ex: /rest_api/users/5
-    path('users/<int:pk>', views.ListUsers.as_view(), name='users')
+    path('users/<int:pk>', views.UsersRoutes.as_view(), name='users_id'),
+    # ex: /users/1/pantry/
+    path('users/<int:pk>/pantry/', views.PantryRoutes.as_view(), name='pantry'),
 ]
