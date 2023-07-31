@@ -47,27 +47,30 @@ def index(request):
     return HttpResponse("Hello World")
 
 
-def login(request):
-    print('in login')
-    return Response("Successfully logged in")
-    # # print(request.POST)
-    # username = request.POST['username']
-    # password = request.POST['password']
-    # # user = "TEST"
-    # user = authentication(request, username=username, password=password)
-    # if user is not None:
-    #     login(request, user)
-    #     return Response(user.to_dict())
-    #     HttpResponse(f'User {username} successfully loged in.')
-    #     # response
+class LoginView(APIView):
 
-    # else:
-    #     # invalid response
-    #     pass
+    def get(self, request):
+        print('in login')
+        return Response("Successfully logged in")
+        # # print(request.POST)
+        # username = request.POST['username']
+        # password = request.POST['password']
+        # # user = "TEST"
+        # user = authentication(request, username=username, password=password)
+        # if user is not None:
+        #     login(request, user)
+        #     return Response(user.to_dict())
+        #     HttpResponse(f'User {username} successfully loged in.')
+        #     # response
+
+        # else:
+        #     # invalid response
+        #     pass
 
 
-def logout_view(request):
-    logout(request)
+class LogoutView(APIView):
+    def get(self, request):
+        return Response('Successfully logged out')
 
 class UsersRoutes(APIView):
 
