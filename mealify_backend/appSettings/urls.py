@@ -1,5 +1,5 @@
 from django.urls import include, path
-from .views import SettingsViewView
+from .views import SettingsView
 
 urlpatterns = [
     path('settings', SettingsView.as_view()),
