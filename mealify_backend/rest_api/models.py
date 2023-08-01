@@ -45,7 +45,7 @@ class Pantry(models.Model):
     def to_dict(self):
         return {
             'id': self.pk,
-            'user': self.user,
+            'user': self.user.pk,
             'food_list': self.food_list,
             'updated': self.updated,
         }
@@ -63,7 +63,7 @@ class Recipe(models.Model):
     def to_dict(self):
         return {
             'id': self.pk,
-            'user': self.user,
+            'user': self.user.pk,
             'name': self.name,
             'ingredients': self.ingredients,
             'instructions': self.instructions,
