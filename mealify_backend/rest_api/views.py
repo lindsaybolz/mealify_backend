@@ -10,19 +10,19 @@ def index(request):
     return HttpResponse("Hello World")
 
 
-def login(request):
-    username = request.POST['username']
-    password = request.POST['password']
-    # user = "TEST"
-    user = authenticate(request, username=username, password=password)
-    if user is not None:
-        login(request, user)
-        HttpResponse(f'User {username} successfully loged in.')
-        # response
+# def login(request):
+#     username = request.POST['username']
+#     password = request.POST['password']
+#     # user = "TEST"
+#     user = authenticate(request, username=username, password=password)
+#     if user is not None:
+#         login(request, user)
+#         HttpResponse(f'User {username} successfully loged in.')
+#         # response
 
-    else:
-        # invalid response
-        pass
+#     else:
+#         # invalid response
+#         pass
 
 
 def logout_view(request):
