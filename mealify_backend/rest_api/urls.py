@@ -3,10 +3,6 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    # ex: /rest_api/login/
-    path('login/', views.LoginView.as_view(), name='login'),
-    # ex: /rest_api/logout/
-    path('logout/', views.LogoutView.as_view(), name='logout'),
     # ex: /rest_api/users/
     path('users/', views.UsersRoutes.as_view(), name='users'),
     # ex: /rest_api/users/5

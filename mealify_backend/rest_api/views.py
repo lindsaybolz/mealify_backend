@@ -9,16 +9,6 @@ from user_api.models import AppUser
 from .models import Pantry, Recipe
 
 # Create your views here.
-class LoginView(APIView):
-    def get(self, request):
-        return Response("Successfully logged in")
-
-
-class LogoutView(APIView):
-    def get(self, request):
-        return Response('Successfully logged out')
-
-
 class UsersRoutes(APIView):
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (SessionAuthentication,)
@@ -39,22 +29,6 @@ class UsersRoutes(APIView):
         return Response(response)
 
 
-    # def post(self, request):
-
-    #     # Add validataion!
-    #     new_user = AppUser.objects.create( 
-    #         password = request.data['password'],
-    #         username = request.data['username'],
-    #         first_name = request.data['first_name'],
-    #         last_name = request.data['last_name'],
-    #         email = request.data['email'],
-    #         alergies = request.data['alergies'],
-    #         restrictions = request.data['restrictions'],
-    #         prefrences = request.data['prefrences']
-    #     )
-    #     return Response(new_user.to_dict())
-
-
 class PantryRoutes(APIView):
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (SessionAuthentication,)
@@ -68,7 +42,6 @@ class PantryRoutes(APIView):
         food_list = {}
         for item in request.data['food_list']:
             food_list[item] = 1
-        # food_list = request.data['food_list']
         new_pantry = Pantry.objects.create( 
             user = user,
             food_list = food_list,
@@ -92,9 +65,8 @@ class PantryRoutes(APIView):
 
     def delete(self, request, **args):
         pantry = get_object_or_404(Pantry, user_id=args['pk'])
-        pantry_dict = pantry.to_dict()
         pantry.delete()
-        return Response(f'Pantry successflly deleted: id = {pk}')
+        return Response(f'Pantry successflly deleted: id = {args["pk"]}')
 
 class RecipesRoutes(APIView):
     permission_classes = (permissions.IsAuthenticated,)
@@ -127,14 +99,15 @@ class RecipesRoutes(APIView):
 
             return Response(recipes_response)
         else:
-            if request.GET['pantry'] != None:
+            # if request.GET['pantry'] != None:
+            if request.GET.get('pantry'):
                 pantry = get_object_or_404(Pantry, user_id=args['pk'])
                 filtered_recipes = []
                 for ingredient in pantry.food_list.keys():
                     for recipe in recipes:
                         if recipe.ingredients.get(ingredient):
                             filtered_recipes.append(recipe.to_dict())
-            elif request.GET['ingredients'] != None:
+            elif request.GET.get('ingredients'):
                 for ingredient in request.GET['ingredients'].split(', '):
                     filtered_recipes = [recipe.to_dict() for recipe in recipes if recipe.ingredients.get(ingredient) != None]
             

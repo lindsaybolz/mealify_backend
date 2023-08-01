@@ -26,16 +26,15 @@ Lindsay Wilson, Elaine Watkins, and Pha'lesa Patton Ada C19 Capstone Mealify
     - `python manage.py runserver`
 
 ## Endpoints
-
+Please note all these routes require a session-id and csrftoken in the header as {Cookie: sessionid=`<session_id>`} and {X-CSRFToken: `<csrf-token>`} key value pairs 
 | Route | Query Parameter(s) | Route Description | Response |
 |--|--|--|--|
-|`GET` `rest_api/login/`| None | Dummy Route for login| `"Successfully logged in"` |
-|`GET` `rest_api/logout/`| None | Dummy Route for logout| `"Successfully logged out"` |
+|`POST` `user_api/register/`| `{"email": "example@example.com", "username": "example", "password": "example123"}` | Creates a new user| `{"password": "example123", "last_login": null, "email": "example@example.com", "username": "example"}` |
+|`POST` `user_api/login/`| `{"email": "test@example.com", "password": "testing123"}` | Logs user in with email and password| `{"email": "test2@example.com", "password": "testing123"}` |
+|`POST` `user_api/logout/`| None | Logs out currently logged in| `"Successfully logged out"` |
 |`GET` `rest_api/users/` | None | Returns list of all users as dictionaries | `[{"id": 2, "last_login": "2023-07-28T19:25:07.547485Z", "is_superuser": true, "username": "user1", "first_name": "User", "last_name": "Profile", "email": "ada@email.com", "is_staff": false, "is_active": true,"date_joined": "2023-07-28T19:24:32.195340Z", "alergies": {}, "restrictions": {}, "prefrences": {}}, {...}]`|
 |`GET` `rest_api/users/<pk>/` | None | Returns list of user with `pk` as a dictionary | `[{"id": <pk>, "last_login": "2023-07-28T19:25:07.547485Z", "is_superuser": true, "username": "user1", "first_name": "User", "last_name": "Profile", "email": "ada@email.com", "is_staff": false, "is_active": true,"date_joined": "2023-07-28T19:24:32.195340Z", "alergies": {}, "restrictions": {}, "prefrences": {}}]`|
-|`POST` `rest_api/users/` | `{"username": "test6", "password": "user0987", "email": "test_email@email.com", "alergies": "eggs, nuts", "first_name": "Bla", "last_name": "Dee", "prefrences": "", "restrictions": ""}` | Creates new User object. And returns a dictionary of the new User object. | `{"id": <pk>, "last_login": "2023-07-28T19:25:07.547485Z", "is_superuser": true, "username": "user1", "first_name": "User", "last_name": "Profile", "email": "ada@email.com", "is_staff": false, "is_active": true,"date_joined": "2023-07-28T19:24:32.195340Z", "alergies": {}, "restrictions": {}, "prefrences": {}}`|
 |`DELETE` `rest_api/users/<pk>/` | None | Deletes the user with <pk> id. | `"Successfully deleted <first_name> <last_name>: <username>"`|
-|`GET` `rest_api/users/<pk>/pantry/` | None | Gets the pantry associated with the user with with an id = pk.  Returns a dictionary of the pantry | `{"id": 8, "user": 4, "food_list": { "limes": 1, "tomatoes": 1}, "updated": "2023-07-31T00:00:00Z"}`|
 |`GET` `rest_api/users/<pk>/pantry/` | None | Gets the pantry associated with the user with with an id = pk.  Returns a dictionary of the pantry | `{"id": 8, "user": 4, "food_list": { "limes": 1, "tomatoes": 1}, "updated": "2023-07-31T00:00:00Z"}`|
 |`POST` `rest_api/users/<pk>/pantry/` | `{"food_list": ["tomatoes", "limes"]}` | Creates a newpantr y associated with the user with with an id = pk.  Returns a dictionary of the pantry. | `{"id": 8, "user": 4, "food_list": { "limes": 1, "tomatoes": 1}, "updated": "2023-07-31T00:00:00Z"}`|
 |`PATCH` `rest_api/users/<pk>/pantry/add/` | `{"food_list": ["apples"]}` | Adds a comma seperated list to the food_list attribute of the pantry.  Returns the updated pantry object | `{"id": 8, "user": 4, "food_list": { "limes": 1, "tomatoes": 1, "apples": 1}, "updated": "2023-07-31T00:00:00Z"}`|
