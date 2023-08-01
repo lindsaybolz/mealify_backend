@@ -46,3 +46,16 @@ class AppUser(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.username
+    
+    def to_dict(self):
+        return {
+            'pk': self.pk,
+            'last_login': self.last_login,
+            'is_superuser': self.is_superuser,
+            'username': self.username,
+            'email': self.email,
+            'is_active': self.is_active,
+            'alergies': self.alergies,
+            'restrictions': self.restrictions,
+            'prefrences': self.prefrences,
+        }

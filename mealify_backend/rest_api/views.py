@@ -1,8 +1,12 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.shortcuts import get_list_or_404, get_object_or_404
+from rest_framework import permissions, status
+from rest_framework.authentication import SessionAuthentication
 
-from .models import User, Pantry, Recipe
+from user_api.models import AppUser
+# from .models import User, Pantry, Recipe
+from .models import Pantry, Recipe
 
 # Create your views here.
 class LoginView(APIView):
@@ -16,47 +20,51 @@ class LogoutView(APIView):
 
 
 class UsersRoutes(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (SessionAuthentication,)
 
     def get(self, request, **args):
         if args.get('pk'):
-            user = get_object_or_404(User, pk=args['pk'])
+            user = get_object_or_404(AppUser, pk=args['pk'])
             return Response(user.to_dict())
         else:   
-            usernames = [user.to_dict() for user in User.objects.all()]
+            usernames = [user.to_dict() for user in AppUser.objects.all()]
             return Response(usernames)
 
 
     def delete(self, request, pk):
-        user = User.objects.get(pk=pk)
+        user = AppUser.objects.get(pk=pk)
         response = f'Successfully deleted {str(user)}'
         user.delete()
         return Response(response)
 
 
-    def post(self, request):
+    # def post(self, request):
 
-        # Add validataion!
-        new_user = User.objects.create( 
-            password = request.data['password'],
-            username = request.data['username'],
-            first_name = request.data['first_name'],
-            last_name = request.data['last_name'],
-            email = request.data['email'],
-            alergies = request.data['alergies'],
-            restrictions = request.data['restrictions'],
-            prefrences = request.data['prefrences']
-        )
-        return Response(new_user.to_dict())
+    #     # Add validataion!
+    #     new_user = AppUser.objects.create( 
+    #         password = request.data['password'],
+    #         username = request.data['username'],
+    #         first_name = request.data['first_name'],
+    #         last_name = request.data['last_name'],
+    #         email = request.data['email'],
+    #         alergies = request.data['alergies'],
+    #         restrictions = request.data['restrictions'],
+    #         prefrences = request.data['prefrences']
+    #     )
+    #     return Response(new_user.to_dict())
 
 
 class PantryRoutes(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (SessionAuthentication,)
 
     def get(self, request, **args):
         pantry = get_object_or_404(Pantry, user_id=args['pk'])
         return Response(pantry.to_dict())
 
     def post(self, request, **args):
-        user = get_object_or_404(User, pk=args['pk'])
+        user = get_object_or_404(AppUser, pk=args['pk'])
         food_list = {}
         for item in request.data['food_list']:
             food_list[item] = 1
@@ -89,10 +97,12 @@ class PantryRoutes(APIView):
         return Response(f'Pantry successflly deleted: id = {pk}')
 
 class RecipesRoutes(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (SessionAuthentication,)
 
 
     def post(self, request, **args):
-        user = get_object_or_404(User, pk=args['pk'])
+        user = get_object_or_404(AppUser, pk=args['pk'])
         ingredients = {}
         for ingredient in request.data['ingredients']:
             ingredients[ingredient] = 1
