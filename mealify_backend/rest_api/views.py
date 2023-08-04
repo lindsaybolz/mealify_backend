@@ -72,7 +72,6 @@ class RecipesRoutes(APIView):
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (SessionAuthentication,)
 
-
     def post(self, request, **args):
         user = get_object_or_404(AppUser, pk=args['pk'])
         ingredients = {}
@@ -99,7 +98,6 @@ class RecipesRoutes(APIView):
 
             return Response(recipes_response)
         else:
-            # if request.GET['pantry'] != None:
             if request.GET.get('pantry'):
                 pantry = get_object_or_404(Pantry, user_id=args['pk'])
                 filtered_recipes = []
