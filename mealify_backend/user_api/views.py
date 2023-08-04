@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from .serializers import UserRegisterSerializer, UserLoginSerializer, UserSerializer
 from rest_framework import permissions, status
-from django.views.decorators.csrf import csrf_exempt
+# from django.views.decorators.csrf import csrf_exempt
 
 # Create your views here.
 class UserRegister(APIView):
@@ -35,6 +35,9 @@ class UserLogin(APIView):
             return Response(user.to_dict(), status=status.HTTP_200_OK)
 
 class UserLogout(APIView):
+    permission_classes = (permissions.AllowAny,)
+    authentication_classes = (BasicAuthentication,)
+
     def post(self, request):
         logout(request)
         return Response('Successfully logged out', status=status.HTTP_200_OK)
