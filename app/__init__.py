@@ -32,11 +32,11 @@ def create_app(test_config = None):
 
     # Register Blueprints here
     from .routes import users_bp
-    # from .routes import pantry_bp
     from .routes import recipes_bp
+    from .routes import pantry_bp
     app.register_blueprint(users_bp)
-    # app.register_blueprint(pantry_bp)
     app.register_blueprint(recipes_bp)
+    app.register_blueprint(pantry_bp)
 
 
     CORS(app)

@@ -1,4 +1,5 @@
 from flask import Blueprint, request, jsonify, abort, make_response
+from sqlalchemy.orm.attributes import flag_modified    
 from app import db
 from app.models.user import User
 from app.models.recipe import Recipe
@@ -94,19 +95,75 @@ PANTRY ROUTES
 @users_bp.route('/<user_id>/pantry', methods=['POST'])
 def create_pantry_for_user(user_id):
     user = validate_model(User, user_id)
-    request_body = request.get_json()
-    food_dict = {}
-    for item in request_body['food_dict']:
-        food_dict[item] = 1
-    pantry_dict = {
-        'user': user,
-        'user_id': user_id,
-        'food_dict': food_dict,
-    }
-    new_pantry = Pantry.from_dict(pantry_dict)
+    if list(Pantry.query.filter_by(user=user)) == []:
+        request_body = request.get_json()
+        food_dict = {}
+        for item in request_body['food_list']:
+            food_dict[item] = 1
+        pantry_dict = {
+            'user': user,
+            'user_id': user_id,
+            'food_dict': food_dict,
+        }
+
+        new_pantry = Pantry.from_dict(pantry_dict)
+        db.session.add(new_pantry)
+        db.session.commit()
+
+        return new_pantry.to_dict(), 200
+    else:
+        return f'User with id={user_id} already has a pantry', 400
 
 
+@users_bp.route('/<user_id>/pantry', methods=['GET'])
+def get_pantry_for_user(user_id):
+    user = validate_model(User, user_id)
+    pantry = Pantry.query.filter_by(user=user)
+    if list(pantry) == []:
+        return jsonify([]), 200
 
+    return list(pantry)[0].to_dict(), 200
+
+
+@pantry_bp.route('/<pantry_id>/add', methods=['PATCH'])
+def add_items_to_pantry(pantry_id):
+    pantry = validate_model(Pantry, pantry_id)
+    new_items = request.get_json()['food_list']
+    new_food_dict = pantry.food_dict
+    for item in new_items:
+        if pantry.food_dict.get(item) == None:    
+            new_food_dict[item] = 1
+            flag_modified(pantry, 'food_dict')
+
+
+    pantry.food_dict = new_food_dict
+    db.session.commit()
+    return pantry.to_dict(), 200
+
+
+@pantry_bp.route('/<pantry_id>/remove', methods=['PATCH'])
+def remove_items_to_pantry(pantry_id):
+    pantry = validate_model(Pantry, pantry_id)
+    new_items = request.get_json()['food_list']
+    for item in new_items:
+        if pantry.food_dict.get(item):    
+            pantry.food_dict.pop(item)
+            flag_modified(pantry, 'food_dict')
+        else:
+            return f'{item} is not in the pantry', 400
+
+    db.session.commit()
+    return pantry.to_dict(), 200
+
+
+@pantry_bp.route('/<pantry_id>', methods=['DELETE'])
+def delete_pantry(pantry_id):
+    pantry = validate_model(Pantry, pantry_id)
+
+    db.session.delete(pantry)
+    db.session.commit()
+
+    return jsonify(f'Pantry {pantry_id} successfully deleted'), 201
 
 
 """
@@ -120,6 +177,7 @@ def create_recipe_for_user(user_id):
     ingredients = {}
     for ingredient in request_body['ingredients']:
         ingredients[ingredient] = 1
+        
     recipe_dict = {
         'user': user,
         'user_id': user_id,
@@ -131,26 +189,25 @@ def create_recipe_for_user(user_id):
         'instructions': request_body['instructions'],
     }
     new_recipe = Recipe.from_dict(recipe_dict)
-
+    print(type(new_recipe.ingredients))
     db.session.add(new_recipe)
     db.session.commit()
-
+    print(type(new_recipe.ingredients))
     return new_recipe.to_dict(), 200
 
 @users_bp.route('/<user_id>/recipes', methods=['GET'])
 def get_recipe_for_user(user_id):
     user = validate_model(User, user_id)
     recipes = Recipe.query.filter_by(user=user)
-    # print(type(request.args.getlist('ingredients')))
     pantry_query = request.args.getlist("pantry")
     ingredient_query = request.args.getlist("ingredients")
+    filtered_recipes = []
+
     if not ingredient_query and not pantry_query:
-        recipe_response = []
         for recipe in recipes:
             if recipe.user_state != -1:
-                recipe_response.append(recipe.to_dict())
-
-        return jsonify(recipe_response), 200
+                filtered_recipes.append(recipe.to_dict())
+        return jsonify(filtered_recipes), 200
 
     # filtered_recipes = []
     # if pantry_query:
