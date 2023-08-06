@@ -9,7 +9,7 @@ class User(db.Model):
     prefrences = db.Column(db.String, unique=True)
     restrictions = db.Column(db.String, unique=True)
     recipes = db.relationship("Recipe", back_populates='user', cascade="all, delete-orphan")
-    # pantry = db.relationship("Pantry", backref='user', cascade = "all, delete-orphan", uselist=False)
+    pantry = db.relationship("Pantry", back_populates='user', cascade="all, delete-orphan")
 
     # def __repr__(self):
     #     return self.username

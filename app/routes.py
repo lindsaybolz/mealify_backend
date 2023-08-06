@@ -88,6 +88,26 @@ def delete_user(user_id):
     db.session.commit()
 
     return jsonify('User successfully deleted'), 201
+"""
+PANTRY ROUTES
+"""
+@users_bp.route('/<user_id>/pantry', methods=['POST'])
+def create_pantry_for_user(user_id):
+    user = validate_model(User, user_id)
+    request_body = request.get_json()
+    food_dict = {}
+    for item in request_body['food_dict']:
+        food_dict[item] = 1
+    pantry_dict = {
+        'user': user,
+        'user_id': user_id,
+        'food_dict': food_dict,
+    }
+    new_pantry = Pantry.from_dict(pantry_dict)
+
+
+
+
 
 """
 RECIPE ROUTES
@@ -100,7 +120,6 @@ def create_recipe_for_user(user_id):
     ingredients = {}
     for ingredient in request_body['ingredients']:
         ingredients[ingredient] = 1
-    print(user.to_dict())
     recipe_dict = {
         'user': user,
         'user_id': user_id,
@@ -136,7 +155,7 @@ def get_recipe_for_user(user_id):
     # filtered_recipes = []
     # if pantry_query:
     #     pantry = Pantry.query.filter_by(user=user)
-    #     for ingredient in pantry.food_list.keys():
+    #     for ingredient in pantry.food_dict.keys():
     #         for recipe in recipes:  
     #             if recipe.ingredients.get(ingredient):
     else:
