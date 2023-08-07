@@ -47,22 +47,6 @@ def create_user():
         abort(make_response({"message": "User input data invalid.  Make sure the username and email are unique."}, 400))
     
     
-@users_bp.route("", methods = ["GET"])
-def get_users():
-    users = User.query.all()
-    users_response = []
-    for user in users:
-        users_response.append(user.to_dict())
-    
-    return jsonify(users_response), 200
-
-
-@users_bp.route("/<user_id>", methods = ["GET"])
-def get_one_user(user_id):
-    user = validate_model(User, user_id)
-    return user.to_dict(), 201
-
-
 @users_bp.route("/login", methods = ["GET"])
 def login():    
     request_body = request.get_json()
@@ -78,6 +62,23 @@ def login():
 def logout():    
     print('logout')
     return 'Successfully logged out!', 200
+
+
+@users_bp.route("", methods = ["GET"])
+def get_users():
+    users = User.query.all()
+    users_response = []
+    for user in users:
+        users_response.append(user.to_dict())
+    
+    return jsonify(users_response), 200
+
+
+@users_bp.route("/<user_id>", methods = ["GET"])
+def get_one_user(user_id):
+    user = validate_model(User, user_id)
+    return user.to_dict(), 201
+
 
 @users_bp.route("/<user_id>/alergies/add", methods=['PATCH'])
 def add_user_alergies(user_id):
@@ -169,8 +170,6 @@ def remove_user_restrictions(user_id):
     return user.to_dict(), 200
 
 
-
-
 @users_bp.route('/<user_id>', methods=['DELETE'])
 def delete_user(user_id):
     user = validate_model(User, user_id)
@@ -178,7 +177,7 @@ def delete_user(user_id):
     db.session.delete(user)
     db.session.commit()
 
-    return jsonify('User successfully deleted'), 201
+    return jsonify(f'User {user_id} successfully deleted'), 201
 
 
 """
@@ -281,35 +280,37 @@ def create_recipe_for_user(user_id):
         'instructions': request_body['instructions'],
     }
     new_recipe = Recipe.from_dict(recipe_dict)
-    print(type(new_recipe.ingredients))
     db.session.add(new_recipe)
     db.session.commit()
-    print(type(new_recipe.ingredients))
     return new_recipe.to_dict(), 200
 
 @users_bp.route('/<user_id>/recipes', methods=['GET'])
 def get_recipe_for_user(user_id):
+    print('in get_recipes')
     user = validate_model(User, user_id)
     recipes = Recipe.query.filter_by(user=user)
     pantry_query = request.args.getlist("pantry")
     ingredient_query = request.args.getlist("ingredients")
     filtered_recipes = []
-
+    print(pantry_query)
     if not ingredient_query and not pantry_query:
         for recipe in recipes:
             if recipe.user_state != -1:
                 filtered_recipes.append(recipe.to_dict())
-        return jsonify(filtered_recipes), 200
+        print('no queies')
 
-    # filtered_recipes = []
-    # if pantry_query:
-    #     pantry = Pantry.query.filter_by(user=user)
-    #     for ingredient in pantry.food_dict.keys():
-    #         for recipe in recipes:  
-    #             if recipe.ingredients.get(ingredient):
+        return jsonify(filtered_recipes), 200
+    
     else:
+        if pantry_query:
+            pantry = Pantry.query.filter_by(user=user).first()
+            pantry_ingredients = pantry.food_dict
+            for ingredient in pantry_ingredients.keys():
+                for recipe in recipes:  
+                    recipe_ingredients = json.loads(recipe.ingredients.replace("'", '"'))
+                    if recipe_ingredients.get(ingredient):
+                        filtered_recipes.append(recipe.to_dict())
         if ingredient_query:
-            filtered_recipes = []
             for ingredient in ingredient_query[0].split(', '):
                 for recipe in recipes:
                     recipe_ingredients = json.loads(recipe.ingredients.replace("'", '"'))
