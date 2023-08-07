@@ -47,17 +47,14 @@ def create_user():
         abort(make_response({"message": "User input data invalid.  Make sure the username and email are unique."}, 400))
     
     
-@users_bp.route("/login", methods = ["GET"])
+@users_bp.route("/login", methods = ["POST"])
 def login():    
     request_body = request.get_json()
-    print(request_body)
-    print(request_body['email'])
-    print(User.query.filter_by(email=request_body['email']))
     user = User.query.filter_by(email=request_body['email']).first()
     if not user:
         return 'That email is invalid', 400
     elif user.password != request_body['password']:
-        return 'invalid password', 400
+        return 'Invalid password', 400
     return user.to_dict(), 200
 
 
