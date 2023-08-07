@@ -8,7 +8,7 @@ import json
 
 # import requests 
 # import os
-# import re
+import re
 
 
 # Helper Functions:
@@ -25,6 +25,7 @@ def validate_model(model_class, model_id):
 
     return model
 
+
 users_bp = Blueprint("users", __name__, url_prefix="/users")
 pantry_bp = Blueprint("pantry", __name__, url_prefix="/pantry")
 recipes_bp = Blueprint("recipes", __name__, url_prefix="/recipes")
@@ -37,14 +38,13 @@ def create_user():
     request_body = request.get_json()
     try:
         if request_body.get('username') and request_body.get('password') and request_body.get('email'):
-            # clean_data = validate_data(request_body)
             new_user = User.from_dict(request_body)
         db.session.add(new_user)
         db.session.commit()
 
         return jsonify(new_user.to_dict()), 201
     except:
-        abort(make_response({"message": "User input data incomplete"}, 400))
+        abort(make_response({"message": "User input data invalid.  Make sure the username and email are unique."}, 400))
     
     
 @users_bp.route("", methods = ["GET"])

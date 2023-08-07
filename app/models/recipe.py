@@ -8,7 +8,7 @@ class Recipe(db.Model):
     instructions = db.Column(db.String, default='')
     nutritional_data = db.Column(db.Integer, default=0)
     url = db.Column(db.String(50), default='')
-    user_state = db.Column(db.Integer, sa.CheckConstraint('age > 0 AND age < 100'))
+    user_state = db.Column(db.Integer, sa.CheckConstraint('user_state > -2 AND user_state < 2'))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     user = db.relationship("User", back_populates='recipes')
 

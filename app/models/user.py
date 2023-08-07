@@ -16,7 +16,10 @@ class User(db.Model):
 
     @classmethod
     def from_dict(cls, dict_data):
-        return User(password=dict_data['password'], email=dict_data['email'], username=dict_data['username'])
+        return User(
+            password=dict_data['password'], 
+            email=dict_data['email'], 
+            username=dict_data['username'])
 
     def to_dict(self):
         recipes = [recipe.to_dict() for recipe in self.recipes]
