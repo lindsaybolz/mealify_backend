@@ -5,9 +5,9 @@ class User(db.Model):
     password = db.Column(db.String(50), nullable=False)
     email = db.Column(db.String(50), unique=True, nullable=False)
     username = db.Column(db.String(50), unique=True, nullable=False)
-    alergies = db.Column(db.String, unique=True)
-    prefrences = db.Column(db.String, unique=True)
-    restrictions = db.Column(db.String, unique=True)
+    alergies = db.Column(db.JSON, default=lambda: {})
+    prefrences = db.Column(db.JSON, default=lambda: {})
+    restrictions = db.Column(db.JSON, default=lambda: {})
     recipes = db.relationship("Recipe", back_populates='user', cascade="all, delete-orphan")
     pantry = db.relationship("Pantry", back_populates='user', cascade="all, delete-orphan")
 

@@ -79,6 +79,96 @@ def logout():
     print('logout')
     return 'Successfully logged out!', 200
 
+@users_bp.route("/<user_id>/alergies/add", methods=['PATCH'])
+def add_user_alergies(user_id):
+    user = validate_model(User, user_id)
+    alergies = request.get_json()['alergies']
+    new_alergies = json.loads(user.alergies)
+    for alergie in alergies:
+        if new_alergies.get(alergie) == None:    
+            new_alergies[alergie] = 1
+
+    user.alergies = new_alergies
+    db.session.commit()
+    return user.to_dict(), 200
+
+
+@users_bp.route("/<user_id>/alergies/remove", methods=['PATCH'])
+def remove_user_alergies(user_id):
+    user = validate_model(User, user_id)
+    alergies = request.get_json()['alergies']
+    new_alergies = json.loads(user.alergies)
+    for alergie in alergies:
+        if new_alergies.get(alergie):    
+            new_alergies.pop(alergie)
+        else:
+            return f"{alergie} is not in the existing alergies", 400
+
+    user.alergies = new_alergies
+    db.session.commit()
+    return user.to_dict(), 200
+
+
+@users_bp.route("/<user_id>/prefrences/add", methods=['PATCH'])
+def add_user_prefrences(user_id):
+    user = validate_model(User, user_id)
+    prefrences = request.get_json()['prefrences']
+    new_prefrences = json.loads(user.prefrences)
+    for prefrence in prefrences:
+        if new_prefrences.get(prefrence) == None:    
+            new_prefrences[prefrence] = 1
+
+    user.prefrences = new_prefrences
+    db.session.commit()
+    return user.to_dict(), 200
+
+
+@users_bp.route("/<user_id>/prefrences/remove", methods=['PATCH'])
+def remove_user_prefrences(user_id):
+    user = validate_model(User, user_id)
+    prefrences = request.get_json()['prefrences']
+    new_prefrences = json.loads(user.prefrences)
+    for prefrence in prefrences:
+        if new_prefrences.get(prefrence):    
+            new_prefrences.pop(prefrence)
+        else:
+            return f"{prefrence} is not in the existing prefrences", 400
+
+    user.prefrences = new_prefrences
+    db.session.commit()
+    return user.to_dict(), 200
+
+
+@users_bp.route("/<user_id>/restrictions/add", methods=['PATCH'])
+def add_user_restrictions(user_id):
+    user = validate_model(User, user_id)
+    restrictions = request.get_json()['restrictions']
+    new_restrictions = json.loads(user.restrictions)
+    for restriction in restrictions:
+        if new_restrictions.get(restriction) == None:    
+            new_restrictions[restriction] = 1
+
+    user.restrictions = new_restrictions
+    db.session.commit()
+    return user.to_dict(), 200
+
+
+@users_bp.route("/<user_id>/restrictions/remove", methods=['PATCH'])
+def remove_user_restrictions(user_id):
+    user = validate_model(User, user_id)
+    restrictions = request.get_json()['restrictions']
+    new_restrictions = json.loads(user.restrictions)
+    for restriction in restrictions:
+        if new_restrictions.get(restriction):    
+            new_restrictions.pop(restriction)
+        else:
+            return f"{restriction} is not in the existing restrictions", 400
+
+    user.restrictions = new_restrictions
+    db.session.commit()
+    return user.to_dict(), 200
+
+
 
 
 @users_bp.route('/<user_id>', methods=['DELETE'])
@@ -89,6 +179,8 @@ def delete_user(user_id):
     db.session.commit()
 
     return jsonify('User successfully deleted'), 201
+
+
 """
 PANTRY ROUTES
 """
