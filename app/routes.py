@@ -50,7 +50,7 @@ def create_user():
 @users_bp.route("/login", methods = ["POST"])
 def login():    
     request_body = request.get_json()
-    print(request_body['email'])
+    print('request_body['email']: ',  request_body['email'])
     user = User.query.filter_by(email=request_body['email']).first()
     if not user:
         return 'That email is invalid', 400
