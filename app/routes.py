@@ -50,7 +50,6 @@ def create_user():
 @users_bp.route("/login", methods = ["POST"])
 def login():    
     request_body = request.get_json()
-    print('request_body["email"]: ',  request_body['email'])
     user = User.query.filter_by(email=request_body['email']).first()
     if not user:
         return 'That email is invalid', 400
@@ -61,7 +60,6 @@ def login():
 
 @users_bp.route("/logout", methods = ["GET"])
 def logout():    
-    print('logout')
     return 'Successfully logged out!', 200
 
 
@@ -287,18 +285,15 @@ def create_recipe_for_user(user_id):
 
 @users_bp.route('/<user_id>/recipes', methods=['GET'])
 def get_recipe_for_user(user_id):
-    print('in get_recipes')
     user = validate_model(User, user_id)
     recipes = Recipe.query.filter_by(user=user)
     pantry_query = request.args.getlist("pantry")
     ingredient_query = request.args.getlist("ingredients")
     filtered_recipes = []
-    print(pantry_query)
     if not ingredient_query and not pantry_query:
         for recipe in recipes:
             if recipe.user_state != -1:
                 filtered_recipes.append(recipe.to_dict())
-        print('no queies')
 
         return jsonify(filtered_recipes), 200
     
