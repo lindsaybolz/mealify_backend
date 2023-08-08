@@ -3,11 +3,11 @@ from app import db
 
 class Recipe(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    title = db.Column(db.String(100), nullable=False)
+    title = db.Column(db.String, nullable=False)
     ingredients = db.Column(db.JSON, default=lambda: {})
     instructions = db.Column(db.Text, default='')
     nutritional_data = db.Column(db.Integer, default=0)
-    url = db.Column(db.String(50), default='')
+    url = db.Column(db.String, default='')
     image = db.Column(db.String, default='')
     user_state = db.Column(db.Integer, sa.CheckConstraint('user_state > -2 AND user_state < 2'))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
