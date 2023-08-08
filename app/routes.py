@@ -275,6 +275,7 @@ def create_recipe_for_user(user_id):
         'ingredients': ingredients,
         'nutritional_data': request_body['nutritional_data'],
         'url': request_body['url'],
+        'image': request_body['image'],
         'user_state': request_body['user_state'],
         'instructions': request_body['instructions'],
     }

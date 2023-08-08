@@ -8,6 +8,7 @@ class Recipe(db.Model):
     instructions = db.Column(db.String, default='')
     nutritional_data = db.Column(db.Integer, default=0)
     url = db.Column(db.String(50), default='')
+    image = db.Column(db.String, default='')
     user_state = db.Column(db.Integer, sa.CheckConstraint('user_state > -2 AND user_state < 2'))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     user = db.relationship("User", back_populates='recipes')
@@ -21,6 +22,7 @@ class Recipe(db.Model):
             'instructions': self.instructions,
             'nutritional_data': self.nutritional_data,
             'url': self.url,
+            'image': self.image,
             'user_state': self.user_state,
         }
     
@@ -35,6 +37,7 @@ class Recipe(db.Model):
             instructions = dict_data['instructions'],
             nutritional_data = dict_data['nutritional_data'],
             url = dict_data['url'],
+            image = dict_data['image'],
             user_state = dict_data['user_state'],
         )
 
