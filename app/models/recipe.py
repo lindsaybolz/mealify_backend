@@ -5,7 +5,7 @@ class Recipe(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     title = db.Column(db.String(100), nullable=False)
     ingredients = db.Column(db.JSON, default=lambda: {})
-    instructions = db.Column(db.String, default='')
+    instructions = db.Column(db.Text, default='')
     nutritional_data = db.Column(db.Integer, default=0)
     url = db.Column(db.String(50), default='')
     image = db.Column(db.String, default='')
