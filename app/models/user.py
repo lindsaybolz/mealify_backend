@@ -23,7 +23,10 @@ class User(db.Model):
 
     def to_dict(self):
         recipes = [recipe.to_dict() for recipe in self.recipes]
-
+        try:
+            pantry = self.pantry[0].to_dict()
+        except:
+            pantry = []
         return {
             'id': self.id,
             'username': self.username,
@@ -32,5 +35,5 @@ class User(db.Model):
             'diet_restrictions': self.diet_restrictions,
             'ingredient_preferences': self.ingredient_preferences,
             'recipes': recipes,
-            'pantry': self.pantry[0].to_dict(),
+            'pantry': pantry,
         }
