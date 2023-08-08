@@ -5,9 +5,9 @@ class User(db.Model):
     password = db.Column(db.String(50), nullable=False)
     email = db.Column(db.String(50), unique=True, nullable=False)
     username = db.Column(db.String(50), unique=True, nullable=False)
-    alergies = db.Column(db.JSON, default=lambda: {})
-    prefrences = db.Column(db.JSON, default=lambda: {})
-    restrictions = db.Column(db.JSON, default=lambda: {})
+    intolerances = db.Column(db.JSON, default=lambda: {})
+    ingredient_preferences = db.Column(db.JSON, default=lambda: {})
+    diet_restrictions = db.Column(db.JSON, default=lambda: {})
     recipes = db.relationship("Recipe", back_populates='user', cascade="all, delete-orphan")
     pantry = db.relationship("Pantry", back_populates='user', cascade="all, delete-orphan")
 
@@ -23,13 +23,14 @@ class User(db.Model):
 
     def to_dict(self):
         recipes = [recipe.to_dict() for recipe in self.recipes]
+
         return {
             'id': self.id,
             'username': self.username,
             'email': self.email,
-            'alergies': self.alergies,
-            'restrictions': self.restrictions,
-            'prefrences': self.prefrences,
+            'intolerances': self.intolerances,
+            'diet_restrictions': self.diet_restrictions,
+            'ingredient_preferences': self.ingredient_preferences,
             'recipes': recipes,
-            # 'pantry': self.pantry,
+            'pantry': self.pantry[0].to_dict(),
         }

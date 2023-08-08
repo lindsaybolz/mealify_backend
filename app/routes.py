@@ -79,92 +79,86 @@ def get_one_user(user_id):
     return user.to_dict(), 201
 
 
-@users_bp.route("/<user_id>/alergies/add", methods=['PATCH'])
-def add_user_alergies(user_id):
+@users_bp.route("/<user_id>/intolerances/add", methods=['PATCH'])
+def add_user_intolerances(user_id):
     user = validate_model(User, user_id)
-    alergies = request.get_json()['alergies']
-    new_alergies = json.loads(user.alergies)
-    for alergie in alergies:
-        if new_alergies.get(alergie) == None:    
-            new_alergies[alergie] = 1
+    intolerances = request.get_json()['intolerances']
+    for intolerance in intolerances:
+        if user.intolerances.get(intolerance) == None:    
+            user.intolerances[intolerance] = 1
+            flag_modified(user, 'intolerances')
 
-    user.alergies = new_alergies
     db.session.commit()
     return user.to_dict(), 200
 
 
-@users_bp.route("/<user_id>/alergies/remove", methods=['PATCH'])
-def remove_user_alergies(user_id):
+@users_bp.route("/<user_id>/intolerances/remove", methods=['PATCH'])
+def remove_user_intolerances(user_id):
     user = validate_model(User, user_id)
-    alergies = request.get_json()['alergies']
-    new_alergies = json.loads(user.alergies)
-    for alergie in alergies:
-        if new_alergies.get(alergie):    
-            new_alergies.pop(alergie)
+    intolerances = request.get_json()['intolerances']
+    for intolerance in intolerances:
+        if user.intolerances.get(intolerance):    
+            user.intolerances.pop(intolerance)
+            flag_modified(user, 'intolerances')
         else:
-            return f"{alergie} is not in the existing alergies", 400
+            return f"{intolerance} is not in the existing intolerances", 400
 
-    user.alergies = new_alergies
     db.session.commit()
     return user.to_dict(), 200
 
 
-@users_bp.route("/<user_id>/prefrences/add", methods=['PATCH'])
-def add_user_prefrences(user_id):
+@users_bp.route("/<user_id>/ingredient_preferences/add", methods=['PATCH'])
+def add_user_ingredient_preferences(user_id):
     user = validate_model(User, user_id)
-    prefrences = request.get_json()['prefrences']
-    new_prefrences = json.loads(user.prefrences)
-    for prefrence in prefrences:
-        if new_prefrences.get(prefrence) == None:    
-            new_prefrences[prefrence] = 1
+    ingredient_preferences = request.get_json()['ingredient_preferences']
+    for preference in ingredient_preferences:
+        if user.ingredient_preferences.get(preference) == None:    
+            user.ingredient_preferences[preference] = 1
+            flag_modified(user, 'ingredient_preferences')
 
-    user.prefrences = new_prefrences
     db.session.commit()
     return user.to_dict(), 200
 
 
-@users_bp.route("/<user_id>/prefrences/remove", methods=['PATCH'])
-def remove_user_prefrences(user_id):
+@users_bp.route("/<user_id>/ingredient_preferences/remove", methods=['PATCH'])
+def remove_user_ingredient_preferences(user_id):
     user = validate_model(User, user_id)
-    prefrences = request.get_json()['prefrences']
-    new_prefrences = json.loads(user.prefrences)
-    for prefrence in prefrences:
-        if new_prefrences.get(prefrence):    
-            new_prefrences.pop(prefrence)
+    ingredient_preferences = request.get_json()['ingredient_preferencess']
+    for preference in ingredient_preferences:
+        if user.ingredient_preferences.get(preference):    
+            user.ingredient_preferences.pop(preference)
+            flag_modified(user, 'ingredient_preferences')
         else:
-            return f"{prefrence} is not in the existing prefrences", 400
+            return f"{preference} is not in the existing ingredient preferences", 400
 
-    user.prefrences = new_prefrences
     db.session.commit()
     return user.to_dict(), 200
 
 
-@users_bp.route("/<user_id>/restrictions/add", methods=['PATCH'])
-def add_user_restrictions(user_id):
+@users_bp.route("/<user_id>/diet_restrictions/add", methods=['PATCH'])
+def add_user_diet_restrictions(user_id):
     user = validate_model(User, user_id)
-    restrictions = request.get_json()['restrictions']
-    new_restrictions = json.loads(user.restrictions)
-    for restriction in restrictions:
-        if new_restrictions.get(restriction) == None:    
-            new_restrictions[restriction] = 1
+    diet_restrictions = request.get_json()['diet_restrictions']
+    for restriction in diet_restrictions:
+        if user.diet_restrictions.get(restriction) == None:    
+            user.diet_restrictions[restriction] = 1
+            flag_modified(user, 'diet_restrictions')
 
-    user.restrictions = new_restrictions
     db.session.commit()
     return user.to_dict(), 200
 
 
-@users_bp.route("/<user_id>/restrictions/remove", methods=['PATCH'])
-def remove_user_restrictions(user_id):
+@users_bp.route("/<user_id>/diet_restrictions/remove", methods=['PATCH'])
+def remove_user_diet_restrictions(user_id):
     user = validate_model(User, user_id)
-    restrictions = request.get_json()['restrictions']
-    new_restrictions = json.loads(user.restrictions)
-    for restriction in restrictions:
-        if new_restrictions.get(restriction):    
-            new_restrictions.pop(restriction)
+    diet_restrictions = request.get_json()['diet_restrictions']
+    for restriction in diet_restrictions:
+        if user.diet_restrictions.get(restriction):    
+            user.diet_restrictions.pop(restriction)
+            flag_modified(user, 'diet_restrictions')
         else:
-            return f"{restriction} is not in the existing restrictions", 400
+            return f"{restriction} is not in the existing diet restrictions", 400
 
-    user.restrictions = new_restrictions
     db.session.commit()
     return user.to_dict(), 200
 
