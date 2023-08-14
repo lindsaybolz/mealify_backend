@@ -298,13 +298,13 @@ def get_recipe_for_user(user_id):
             pantry_ingredients = pantry.food_dict
             for ingredient in pantry_ingredients.keys():
                 for recipe in recipes:  
-                    recipe_ingredients = json.loads(recipe.ingredients.replace("'", '"'))
+                    recipe_ingredients = recipe.ingredients
                     if recipe_ingredients.get(ingredient):
                         filtered_recipes.append(recipe.to_dict())
         if ingredient_query:
             for ingredient in ingredient_query[0].split(', '):
                 for recipe in recipes:
-                    recipe_ingredients = json.loads(recipe.ingredients.replace("'", '"'))
+                    recipe_ingredients = recipe.ingredients
                     if recipe_ingredients.get(ingredient):
                         filtered_recipes.append(recipe.to_dict())
         if filtered_recipes == []:
