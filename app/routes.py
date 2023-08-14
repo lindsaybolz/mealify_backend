@@ -308,7 +308,7 @@ def get_recipe_for_user(user_id):
                     if recipe_ingredients.get(ingredient):
                         filtered_recipes.append(recipe.to_dict())
         if filtered_recipes == []:
-            return 'No recipes matching these requirements are saved to this user profile.', 200
+            return 'No recipes matching these requirements are saved to this user profile.', 400
         else:
             return jsonify(filtered_recipes), 200
 
